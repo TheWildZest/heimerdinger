@@ -1,0 +1,7 @@
+Cél: az átló alatti 2. átló pontjainak hasznosságai
+
+c: küszöbérték
+i: futóindex, max értéke c-2 (második koordináta)
+k: kezdő index, értéke 0
+h: hasznosság (fertőzőképes baktériumok száma)
+p: valószínűség (ismeretlen)
