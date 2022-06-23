@@ -25,6 +25,7 @@ def calc_binomial(n, k):
 def to_maximise(probs):
     array = []
     for p in probs:
+        p = 1-p
         sum = 0
         for k in range(i):
             #Calculate 'hasznossag'
