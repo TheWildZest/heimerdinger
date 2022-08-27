@@ -1,58 +1,55 @@
-#Treshold
 import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-print('Adja meg a küszöbértéket!')
+print('Choose the treshold!')
 
-#Init variables
 c = int(input())
-i = c - 2
+c_inc = c + 1
+usefulnessMatrix = []
 
-#If the given point is on or above the main diagonal, 'h' is the 'y' coordinate of the point
-#else 'h' is 'c-1'
-def calc_hasznossag(x, y):
-    if y >= -1 * x + c:
-        h = y
-    else:
-        h = c - 1
+for x in range(c_inc):
+    row = []
+    for y in range(c_inc):
+        row.append(0)
+    
+    usefulnessMatrix.append(row)
 
-    return h
+# If the given point is on or above the main diagonal, 'h' is the 'y' coordinate of the point
+for x in range(c_inc):
+    for y in range(c_inc):
+        if (c <= x + y):
+            usefulnessMatrix[x][y] = y
+        elif( c - 1 <= x + y):
+            usefulnessMatrix[x][y] = c - 1
+        else:
+            usefulnessMatrix[x][y] = 0
 
-def calc_binomial(n, k):
-    return math.factorial(n) / (math.factorial(k) * math.factorial(n - k))
+for i in range(c_inc):
+    print(usefulnessMatrix[i])
 
-def to_maximise(probs):
-    array = []
-    for p in probs:
-        p = 1-p
-        sum = 0
-        for k in range(i):
-            #Calculate 'hasznossag'
-            h = calc_hasznossag(2 * (c - (2 + i + k)), i + k)
+
+
+# def calcBinomial(n, k):
+#     return math.factorial(n) / (math.factorial(k) * math.factorial(n - k))
+
+# def maximise(probs):
+#     array = []
+#     for p in probs:
+#         sum = 0
+#         for i in range(max_i):
+#             # Calculate 'usefulness'
+#             h = calcUsefulness(2 * (c - (2 + max_i + i)), max_i + i)
             
             
-            #Calculate further binomial and exponential components
-            exponent = c - (2 + i) - k
-            b = calc_binomial(i, k) * pow(p, exponent) * pow(1 - p, k)
+#             # Calculate further binomial and exponential components
+#             exponent = c - (2 + max_i) - i
+#             b = calcBinomial(max_i, i) * pow(p, exponent) * pow(1 - p, i)
 
-            #Put the quation together
-            sum = sum + h * b
-            print(sum)
+#             # Put the quation together
+#             sum = sum + h * b
+#             print(sum)
         
-        array.append(sum)
+#         array.append(sum)
 
-    return array
-
-
-x = np.linspace(0, 1, 1000)
-y = to_maximise(x)
-
-# x = np.linspace(0, 2 * np.pi, 200)
-# y = np.sin(x)
-# print('linespace:', x)
-# print('values:', y)
-
-fig, ax = plt.subplots()
-ax.plot(x, y)
-plt.show()
+#     return array
