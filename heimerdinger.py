@@ -76,3 +76,6 @@ for j in range(1, c - 1):
 # Print matrix
 for i in range(c_inc):
     print(usefulnessMatrix[i])
+    
+    
+input()
