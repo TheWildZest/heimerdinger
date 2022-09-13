@@ -2,9 +2,13 @@ from cmath import nan
 import math
 import numpy as np
 
+import random
+
+
 print('Choose the treshold!')
 
 c = int(input())
+
 c_inc = c + 1
 usefulnessMatrix = []
 
@@ -15,67 +19,89 @@ for x in range(c_inc):
     for y in range(c_inc):
         row.append(nan)
     
-    usefulnessMatrix.append(row)
-
-
-# Set usefulnesses on the main diagonal and below it (y coordinate)
-# Above the main diagonal everything stays 0
-for x in range(c_inc):
-    for y in range(c_inc):
-        if (x == 0):
-            usefulnessMatrix[x][y] = y
-
-        if (c <= x + y):
-            usefulnessMatrix[x][y] = y
+    usefulnessMatrix.append(row)     
 
 
 # Calculate usefulness above the main diagonal
 # NOTE: the following calculations are made by a formula created by Mate Szalai
-def calcUsefulness(x, y, j, i, p):
-    # Calculate the summa which needs to ba maximised later
+def calcUsefulness(j, i, p):
+    # select all the possible target positions
+    targetPoints = []
+    for ind in range(j + 1):
+        tp_j = 2 * (j - ind)
+        tp_i = i + ind
+        
+        targetPoint = {}
+        targetPoint['j'] = tp_j
+        targetPoint['i'] = tp_i
+        
+        targetPoints.append(targetPoint)
+    
+    
+    
+    # Calculate a "heuristic" for each targetpoint and add them together
     sum = 0
-    for k in range(c - (x + y)):
-        coordX = 2 * (c - (x + y + k))
-        coordY = x + k
+    for k in range(len(targetPoints)):
+        tp_j = targetPoints[k]["j"]
+        tp_i = targetPoints[k]["i"]
 
         try:
-            usefulnessPart = usefulnessMatrix[coordX][coordY]
-
-            binomialPart = math.factorial(c - (j + i)) / (math.factorial(c - j - i - k) * math.factorial(k))
-            probabilityPart = math.pow(p, c - (j + i) - k) * math.pow(1 - p, k)
-
-            partSolution = usefulnessPart * binomialPart * probabilityPart
-
-            sum = sum + partSolution
-
+            # The choosen targetpoint's usefulnes
+            h = usefulnessMatrix[tp_j][tp_i]
+            
+            # # h = random.randint(0, c -1)
+            # print("From: ", j, ", ", i)
+            # print("To:   ", h_j, ", ", h_i, ": ", h)
+            # print("--------------------")
         except IndexError:
-            sum = y
+            h = tp_i
+
+        binomialPart = math.factorial(j) / (math.factorial(j - (j - k)) * math.factorial(j - k))
+        probabilityPart = ( p ** (j - k) ) * ( (1-p) ** k)
+
+        partSolution = h * binomialPart * probabilityPart
+
+        sum = sum + partSolution
+
 
     return sum
 
 
-# Find the max usefulness for the given matrix element with the given p by 0.0001 precision
-samples = np.linspace(0, 1, 10000)
-for j in range(1, c - 1):
-    for i in range(0, c - j):
+
+for x in range(c_inc):
+    for y in range(c_inc):
+        # Set usefulnesses in the first row (y coordinate)
+        if (x == 0):
+            usefulnessMatrix[x][y] = y
+        
+        # Set usefulnesses on the main diagonal and below it (y coordinate)
+        elif (c <= x + y):
+            usefulnessMatrix[x][y] = y
+
+
+for diag_index in range(c-1, 0, -1):
+    for j in range(diag_index, 0, - 1):
+        # Find the max usefulness for the given matrix element with the given p by 0.0001 precision
+        samples = np.linspace(0, 1, 10000)
+        
+        i = diag_index - j
+        
         maxVal = 0
-
-        coordX = c - (j + i)
-        coordY = i
-
         for p in samples:
-            val = calcUsefulness(coordX, coordY, j, i, p)
+            val = calcUsefulness(j, i, p)
 
             if (val > maxVal):
                 maxVal = val
+
 
         # Set the calculated max usefulness
         usefulnessMatrix[j][i] = maxVal
 
 
 # Print matrix
+print('\n')
 for i in range(c_inc):
-    print(usefulnessMatrix[i])
+    for j in range(len(usefulnessMatrix[i])):
+        print(f'{usefulnessMatrix[i][j]:9.2f}', end="")
     
-    
-input()
+    print('\n')
